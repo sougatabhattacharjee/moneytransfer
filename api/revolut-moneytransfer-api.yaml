@@ -1,0 +1,515 @@
+swagger: '2.0'
+info:
+  title: RESTful API for money transfers between accounts.
+  description: |
+
+    Design and implement a RESTful API (including data model and the backing implementation) for money
+    transfers between accounts.
+  version: '0.0.1'
+  contact:
+    name: Sougata Bhattacharjee
+    email: sougata.bhattacharjee@hotmail.com
+consumes:
+ - application/json
+produces:
+ - application/json
+
+paths:
+
+  # ################################### #
+  #                                     #
+  #             Accounts routes         #
+  #                                     #
+  # ################################### #
+
+  /allAccounts:
+    get:
+      description: Returns list of all accounts (ACTIVE and INACTIVE). If flag paramater presents then results return accordingly.
+
+      parameters:
+        - $ref: '#/parameters/flag'
+
+      responses:
+        '200':
+          description: Ok
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Account'
+        '400':
+          description: wrong flag value, only ACTIVE and INACTIVE allowed
+          schema:
+            type: string
+            description: description of the error
+        '500':
+          description: Internal Server error
+
+  /account:
+    get:
+      description: Returns an active account by id.
+
+      parameters:
+      - $ref: '#/parameters/accountId'
+
+      responses:
+        '200':
+          description: Ok
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/Account'
+        '404':
+          description: account not found
+          schema:
+            type: string
+            description: description of the error
+        '500':
+          description: Internal Server error
+          schema:
+            type: string
+            description: description of the error
+
+    post:
+      description: Accepts a Account Request object as json. Return the created account object
+
+      parameters:
+        - name: AccountRequest
+          in: body
+          required: true
+          schema:
+            type: object
+            description: Account creation request object
+            properties:
+              accountHolder:
+                $ref: '#/definitions/User'
+              balance:
+                $ref: '#/definitions/Money'
+            required:
+              - accountHolder
+              - balance
+
+      responses:
+        '201':
+          description: Account is successfully created
+          schema:
+            type: object
+              items:
+                $ref: '#/definitions/Account'
+        '400':
+          description: Empty payload or bad request
+          schema:
+            type: string
+            description: description of the error
+        '422':
+          description: Unprocessable entities inside payload
+          schema:
+            type: string
+            description: description of the error
+        '500':
+          description: Internal Server error
+          schema:
+            type: string
+            description: description of the error
+
+  /updateAccountInfo:
+    put:
+      description: Accepts a Account information update Request object as json. Return the updated account object
+
+      parameters:
+      - name: AccountRequest
+        in: body
+        required: true
+        schema:
+          type: object
+          description: Account creation request object
+          properties:
+            accountId:
+              type: integer
+              format: long
+              description: Account id for which the account to be updated
+            accountHolder:
+              $ref: '#/definitions/User'
+          required:
+          - accountId
+          - accountHolder
+
+      responses:
+        '200':
+          description: Account is successfully updated
+          schema:
+            type: object
+              items:
+                $ref: '#/definitions/Account'
+        '400':
+          description: Empty payload or bad request
+          schema:
+            type: string
+            description: description of the error
+        '404':
+          description: account not found
+          schema:
+            type: string
+            description: description of the error
+        '422':
+          description: Unprocessable entities inside payload
+          schema:
+            type: string
+            description: description of the error
+        '500':
+          description: Internal Server error
+          schema:
+            type: string
+            description: description of the error
+
+  /updateAccountStatus:
+    put:
+      description: Accepts a Account status update Request object as json. Return the updated account object
+
+      parameters:
+      - name: AccountRequest
+        in: body
+        required: true
+        schema:
+          type: object
+          description: Account creation request object
+          properties:
+            accountId:
+              type: integer
+              format: long
+              description: Account id for which the account to be updated
+            status:
+              type: string
+              enum:
+                - ACTIVE
+                - INACTIVE
+          required:
+          - accountId
+          - status
+
+      responses:
+        '200':
+          description: Account is successfully updated
+          schema:
+            type: object
+              items:
+                $ref: '#/definitions/Account'
+        '400':
+          description: Empty payload or bad request
+          schema:
+            type: string
+            description: description of the error
+        '404':
+          description: account not found
+          schema:
+            type: string
+            description: description of the error
+        '422':
+          description: Unprocessable entities inside payload
+          schema:
+            type: string
+            description: description of the error
+        '500':
+          description: Internal Server error
+          schema:
+            type: string
+            description: description of the error
+
+  /updateAccountBalance/credit:
+    put:
+      description: Accepts a Account balance credit update. Return the updated account object
+
+      parameters:
+      - name: AccountRequest
+        in: body
+        required: true
+        schema:
+          type: object
+          description: Account creation request object
+          properties:
+            accountId:
+              type: integer
+              format: long
+              description: Account id for which the account to be updated
+            balance:
+              $ref: '#/definitions/Money'
+          required:
+          - accountId
+          - balance
+
+      responses:
+        '200':
+          description: Account is successfully updated
+          schema:
+            type: object
+              items:
+                $ref: '#/definitions/Account'
+        '400':
+          description: Empty payload or bad request
+          schema:
+            type: string
+            description: description of the error
+        '404':
+          description: account not found
+          schema:
+            type: string
+            description: description of the error
+        '403':
+          description: If currency not matching
+          schema:
+            type: string
+            description: description of the error
+        '500':
+          description: Internal Server error
+          schema:
+            type: string
+            description: description of the error
+
+  /updateAccountBalance/debit:
+    put:
+      description: Accepts a Account balance debit update. Return the updated account object
+
+      parameters:
+      - name: AccountRequest
+        in: body
+        required: true
+        schema:
+          type: object
+          description: Account creation request object
+          properties:
+            accountId:
+              type: integer
+              format: long
+              description: Account id for which the account to be updated
+            balance:
+              $ref: '#/definitions/Money'
+          required:
+          - accountId
+          - balance
+
+      responses:
+        '200':
+          description: Account is successfully updated
+          schema:
+            type: object
+              items:
+                $ref: '#/definitions/Account'
+        '400':
+          description: Empty payload or bad request
+          schema:
+            type: string
+            description: description of the error
+        '404':
+          description: account not found
+          schema:
+            type: string
+            description: description of the error
+        '403':
+          description: If currency not matching or insufficient balance
+          schema:
+            type: string
+            description: description of the error
+        '500':
+          description: Internal Server error
+          schema:
+            type: string
+            description: description of the error
+
+  # ################################### #
+  #                                     #
+  #       Money transfer routes         #
+  #                                     #
+  # ################################### #
+
+  /alltransfer:
+    get:
+      summary: Get all the transfers. If account id present in the query path then return all transfers for that account.
+
+      parameters:
+      - $ref: '#/parameters/accountId'
+        required: false
+
+      responses:
+        '200':
+          description: List of transfers
+          schema:
+            type: array
+              items:
+                $ref: '#/definitions/MoneyTransfer'
+        '500':
+          description: Internal Server error
+          schema:
+            type: string
+            description: description of the error
+
+  /transfer:
+    post:
+      summary: Create a new transfer between two accounts
+
+      parameters:
+      - name: AccountRequest
+        in: body
+        required: true
+        schema:
+          type: object
+          description: Account creation request object
+          properties:
+            sourceAccountId:
+              type: integer
+              format: long
+              description: Source Account id
+            destinationAccountId:
+              type: integer
+              format: long
+              description: Destination Account id
+            amount:
+              $ref: '#/definitions/Money'
+            description:
+              type: string
+              description: transfer description or note
+          required:
+          - sourceAccountId
+          - destinationAccountId
+          - amount
+
+      responses:
+        '200':
+          description: Transfer is successfully created
+          schema:
+            type: object
+              items:
+                $ref: '#/definitions/MoneyTransfer'
+        '400':
+          description: Empty payload or bad request
+          schema:
+            type: string
+            description: description of the error
+        '403':
+          description: If currency not matching or insufficient balance
+          schema:
+            type: string
+            description: description of the error
+        '500':
+          description: Internal Server error
+          schema:
+            type: string
+            description: description of the error
+
+
+
+
+# ################################### #
+#                                     #
+#             Parameters              #
+#                                     #
+# ################################### #
+parameters:
+  flag:
+    type: string
+    description: filter the accounts by active and inactive status
+    in: query
+    enum:
+    - ACTIVE
+    - INACTIVE
+    required: false
+  accountId:
+    type: number
+    description: system generated account id
+    in: path
+    required: true
+
+
+
+# ################################### #
+#                                     #
+#             Definitions             #
+#                                     #
+# ################################### #
+definitions:
+  MoneyTransfer:
+    type: object
+    description: Represents the definition of a transfer
+    properties:
+      transferId:
+        type: string
+        format: uuid
+      sourceAccountId:
+        type: number
+        format: int32
+      destinationAccountId:
+        type: number
+        format: int32
+      amount:
+        $ref: '#/definitions/Money'
+      transferDate:
+        type: string
+        format: 'date-time'
+        description: The timestamp when the transfer is created
+        example: 2018-09-21T04:32:53.991+02:00
+      description:
+        type: string
+        description: transfer description or note
+    required:
+      - transferId
+      - sourceAccountId
+      - destinationAccountId
+      - amount
+      - transferDate
+
+  Account:
+    type: object
+    description: Represents the definition of an account
+    properties:
+      accountId:
+        type: integer
+        format: long
+        description: System generated account number
+      accountHolder:
+        $ref: '#/definitions/User'
+      balance:
+        $ref: '#/definitions/Money'
+      status:
+        type: string
+        enum:
+          - ACTIVE
+          - INACTIVE
+        description: Indicator whether the account is active or inactive
+      created:
+          type: string
+          format: 'date-time'
+          description: The timestamp when the account is created
+          example: 2018-09-21T04:32:53.991+02:00
+    required:
+      - accountId
+      - accountHolder
+      - balance
+      - status
+      - created
+
+  Money:
+    type: object
+    properties:
+      amount:
+        type: number
+        format: decimal
+        minimum: 0.00
+        description: |
+          Amount must be greater than zero.
+            - ACCEPTED decimal number with a maximum scale of 2
+            - REJECTED decimal number with a maximum scale more than 2
+      currency:
+        type: string
+        format: iso-4217
+        enum: [EUR, GBP, CHF, PLN, NOK, SEK, DKK, CZK, USD]
+        example: EUR
+    required:
+      - amount
+      - currency
+
+  User:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Name of the account holder
+    required:
+      - name

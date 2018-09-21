@@ -41,7 +41,7 @@ public class MoneyTransfer {
     public MoneyTransfer(@JsonProperty(required = true, value = "sourceAccountId") final long sourceAccountId,
                          @JsonProperty(required = true, value = "destinationAccountId") final long destinationAccountId,
                          @JsonProperty(required = true, value = "amount") final Money amount,
-                         @JsonProperty(required = true, value = "description") final String description) {
+                         @JsonProperty(value = "description") final String description) {
         this.sourceAccountId = sourceAccountId;
         this.destinationAccountId = destinationAccountId;
         this.amount = amount;

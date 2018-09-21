@@ -30,7 +30,9 @@ public class Money {
     @JsonCreator
     public Money(@JsonProperty(required = true, value = "amount") final BigDecimal amount,
                  @JsonProperty(required = true, value = "currency") final Currency currency) {
+        Preconditions.checkNotNull(amount);
         Preconditions.checkArgument(amount.compareTo(BigDecimal.ZERO) >= 0, "cannot have amount with negative value");
+        Preconditions.checkArgument(amount.scale() <= 2, "Accepted decimal number must be a maximum scale of 2");
         this.amount = amount;
         this.currency = currency;
     }
