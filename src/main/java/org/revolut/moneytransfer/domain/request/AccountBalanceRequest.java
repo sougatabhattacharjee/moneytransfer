@@ -13,10 +13,8 @@ public class AccountBalanceRequest extends AccountRequest {
 
     private Money balance;
 
-    public AccountBalanceRequest(@JsonProperty(required = true,  value="accountId")
-                                         Long accountId,
-                                 @JsonProperty(required = true,  value="balance")
-                                         Money balance) {
+    public AccountBalanceRequest(@JsonProperty(required = true, value = "accountId") final Long accountId,
+                                 @JsonProperty(required = true, value = "balance") final Money balance) {
         super(accountId);
         this.balance = balance;
     }

@@ -12,8 +12,7 @@ public class AccountRequest {
 
     private Long accountId;
 
-    public AccountRequest(@JsonProperty(required = true,  value="accountId")
-                          final Long accountId) {
+    public AccountRequest(@JsonProperty(required = true, value = "accountId") final Long accountId) {
         this.accountId = accountId;
     }
 }

@@ -5,7 +5,7 @@ package org.revolut.moneytransfer.exception;
  * On 17.09.18
  */
 public class MoneyTransferWebServiceException extends Exception {
-    public MoneyTransferWebServiceException(String message) {
+    public MoneyTransferWebServiceException(final String message) {
         super(message);
     }
 }

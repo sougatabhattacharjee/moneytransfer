@@ -43,12 +43,12 @@ public class MoneyTransferController {
                 final String body = request.body();
                 if (StringUtils.isEmpty(body)) {
                     response.status(HttpStatus.BAD_REQUEST_400);
-                    return new ResponseError("Payload cannot be empty, for details please check the API definition (swagger.yaml)");
+                    return new ResponseError("Payload cannot be empty");
                 }
                 moneyTransferRequest = objectMapper.readValue(body, MoneyTransfer.class);
             } catch (Exception ex) {
                 response.status(HttpStatus.BAD_REQUEST_400);
-                return new ResponseError("Malformed Request, for details please check the API definition (swagger.yaml)");
+                return new ResponseError("Malformed Request");
             }
             try {
                 response.status(HttpStatus.OK_200);

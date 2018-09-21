@@ -1,9 +1,6 @@
 package org.revolut.moneytransfer.controller;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.google.gson.Gson;
@@ -24,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import spark.ResponseTransformer;
 import spark.utils.StringUtils;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,7 +73,7 @@ public class AccountController {
 
         }, jsonTransformer);
 
-        get("/allAccounts", "application/x-www-form-urlencoded", (request, response) -> {
+        get("/allAccounts", JSON, (request, response) -> {
             final String flag = request.queryParamOrDefault("flag", "");
 
             try {
@@ -102,7 +98,7 @@ public class AccountController {
 
         }, jsonTransformer);
 
-        get("/account/:id", "application/x-www-form-urlencoded", (request, response) -> {
+        get("/account/:id", JSON, (request, response) -> {
             final long accountId = Long.parseLong(request.params("id"));
             try {
                 response.status(HttpStatus.OK_200);
@@ -117,12 +113,12 @@ public class AccountController {
 
         }, jsonTransformer);
 
-        put("/updateAccountInfo", "application/x-www-form-urlencoded", (request, response) -> {
+        put("/updateAccountInfo", JSON, (request, response) -> {
             final AccountInfoRequest account;
             final String body = request.body();
             if (StringUtils.isEmpty(body)) {
                 response.status(HttpStatus.BAD_REQUEST_400);
-                return new ResponseError("Payload cannot be empty, for details please check the API definition (swagger.yaml)");
+                return new ResponseError("Payload cannot be empty");
             }
             try {
                 account = objectMapper.readValue(body, AccountInfoRequest.class);
@@ -145,12 +141,12 @@ public class AccountController {
         }, jsonTransformer);
 
 
-        put("/updateAccountStatus", "application/x-www-form-urlencoded", (request, response) -> {
+        put("/updateAccountStatus", JSON, (request, response) -> {
             final AccountStatusRequest account;
             final String body = request.body();
             if (body.isEmpty()) {
                 response.status(HttpStatus.BAD_REQUEST_400);
-                return new ResponseError("Payload cannot be empty, for details please check the API definition (swagger.yaml)");
+                return new ResponseError("Payload cannot be empty");
             }
             try {
                 account = objectMapper.readValue(body, AccountStatusRequest.class);
@@ -172,19 +168,19 @@ public class AccountController {
 
         }, jsonTransformer);
 
-        put("/updateAccountBalance/credit", "application/x-www-form-urlencoded", (request, response) -> {
+        put("/updateAccountBalance/credit", JSON, (request, response) -> {
             final AccountBalanceRequest account;
             final String body = request.body();
             if (body.isEmpty()) {
                 response.status(HttpStatus.BAD_REQUEST_400);
-                return new ResponseError("Payload cannot be empty, for details please check the API definition (swagger.yaml)");
+                return new ResponseError("Payload cannot be empty");
             }
             try {
 
                 account = objectMapper.readValue(body, AccountBalanceRequest.class);
             } catch (Exception ex) {
                 response.status(HttpStatus.BAD_REQUEST_400);
-                return new ResponseError("Malformed Request, for details please check the API definition (swagger.yaml)");
+                return new ResponseError("Malformed Request");
             }
             try {
                 response.status(HttpStatus.OK_200);
@@ -202,18 +198,18 @@ public class AccountController {
 
         }, jsonTransformer);
 
-        put("/updateAccountBalance/debit", "application/x-www-form-urlencoded", (request, response) -> {
+        put("/updateAccountBalance/debit", JSON, (request, response) -> {
             final AccountBalanceRequest account;
             try {
                 final String body = request.body();
                 if (body.isEmpty()) {
                     response.status(HttpStatus.BAD_REQUEST_400);
-                    return new ResponseError("Payload cannot be empty, for details please check the API definition (swagger.yaml)");
+                    return new ResponseError("Payload cannot be empty");
                 }
                 account = objectMapper.readValue(body, AccountBalanceRequest.class);
             } catch (Exception ex) {
                 response.status(HttpStatus.BAD_REQUEST_400);
-                return new ResponseError("Malformed Request, for details please check the API definition (swagger.yaml)");
+                return new ResponseError("Malformed Request");
             }
             try {
                 response.status(HttpStatus.OK_200);

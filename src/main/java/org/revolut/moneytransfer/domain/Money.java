@@ -28,9 +28,8 @@ public class Money {
     }
 
     @JsonCreator
-    public Money(@JsonProperty(required = true,  value="amount")
-                     final BigDecimal amount,
-                 @JsonProperty(required = true,  value="currency") final Currency currency) {
+    public Money(@JsonProperty(required = true, value = "amount") final BigDecimal amount,
+                 @JsonProperty(required = true, value = "currency") final Currency currency) {
         Preconditions.checkArgument(amount.compareTo(BigDecimal.ZERO) >= 0, "cannot have amount with negative value");
         this.amount = amount;
         this.currency = currency;

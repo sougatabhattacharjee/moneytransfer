@@ -11,13 +11,11 @@ import org.revolut.moneytransfer.domain.AccountStatus;
 @Data
 public class AccountStatusRequest extends AccountRequest {
 
-    @JsonProperty(required = true,  value="status")
+    @JsonProperty(required = true, value = "status")
     private AccountStatus status;
 
-    public AccountStatusRequest(@JsonProperty(required = true,  value="accountId")
-                                        final Long accountId,
-                                @JsonProperty(required = true,  value="status")
-                                        final AccountStatus status) {
+    public AccountStatusRequest(@JsonProperty(required = true, value = "accountId") final Long accountId,
+                                @JsonProperty(required = true, value = "status") final AccountStatus status) {
         super(accountId);
         this.status = status;
     }

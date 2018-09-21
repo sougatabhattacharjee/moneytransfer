@@ -13,10 +13,8 @@ public class AccountInfoRequest extends AccountRequest {
 
     private User accountHolder;
 
-    public AccountInfoRequest(@JsonProperty(required = true,  value="accountId")
-                              final Long accountId,
-                              @JsonProperty(required = true,  value="accountHolder")
-                                      final User accountHolder) {
+    public AccountInfoRequest(@JsonProperty(required = true, value = "accountId") final Long accountId,
+                              @JsonProperty(required = true, value = "accountHolder") final User accountHolder) {
         super(accountId);
         this.accountHolder = accountHolder;
     }

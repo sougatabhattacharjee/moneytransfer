@@ -39,10 +39,8 @@ public class Account {
     }
 
     public Account(
-                   @JsonProperty(required = true,  value="accountHolder")
-                   final User accountHolder,
-                   @JsonProperty(required = true,  value="balance")
-                   final Money balance) {
+            @JsonProperty(required = true, value = "accountHolder") final User accountHolder,
+            @JsonProperty(required = true, value = "balance") final Money balance) {
         this.accountHolder = accountHolder;
         this.balance = balance;
         this.created = DateTime.now();
