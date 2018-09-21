@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Basic Account Setup",
+  "type": "object",
+  "properties": {
+    "accountId": {
+      "type": "number"
+    },
+    "accountHolder": {
+      "$ref": "#/definitions/User"
+    },
+    "balance": {
+      "$ref": "#/definitions/Money"
+    },
+    "status": {
+      "type": "string"
+    },
+    "created": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "accountId",
+    "accountHolder",
+    "balance",
+    "status",
+    "created"
+  ],
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "Money": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "number"
+        },
+        "currency": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "amount",
+        "currency"
+      ]
+    }
+  }
+}

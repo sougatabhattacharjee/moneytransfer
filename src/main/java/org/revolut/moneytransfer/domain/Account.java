@@ -45,5 +45,7 @@ public class Account {
                    final Money balance) {
         this.accountHolder = accountHolder;
         this.balance = balance;
+        this.created = DateTime.now();
+        this.status = AccountStatus.ACTIVE;
     }
 }

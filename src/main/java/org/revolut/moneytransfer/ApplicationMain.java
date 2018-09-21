@@ -3,6 +3,7 @@ package org.revolut.moneytransfer;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -59,7 +60,7 @@ public class ApplicationMain {
         return moneyTransferController;
     }
 
-    private static int startServer() {
+    public static int startServer() {
         Spark.init();
 
         createAccountRoute();
@@ -111,6 +112,7 @@ public class ApplicationMain {
 
     public static ObjectMapper getObjectMapper() {
         final ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JodaModule());
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         mapper.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
         return mapper;

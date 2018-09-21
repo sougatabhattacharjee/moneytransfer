@@ -147,9 +147,9 @@ public class MoneyTransferDaoImpl implements MoneyTransferDao {
             throw new MoneyTransferWebServiceException("Destination account does not exist");
         else if (!IS_SOURCE_DESTINATION_ACCOUNT_HAS_SIMILAR_CURRENCY.apply(request))
             throw new MoneyTransferWebServiceException(
-                    "Cannot perform transfer, Source and Destination account have different Currency");
+                    "Source and Destination account have different Currency");
         else if (!IS_SOURCE_ACCOUNT_HAS_SUFFICIENT_BALANCE.apply(request))
             throw new MoneyTransferWebServiceException(
-                    "Cannot perform transfer, Source Account does not have sufficient fund");
+                    "Source Account does not have sufficient fund");
     }
 }

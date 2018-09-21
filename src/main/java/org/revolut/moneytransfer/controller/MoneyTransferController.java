@@ -37,7 +37,7 @@ public class MoneyTransferController {
 
         path("/health", () -> get("", (req, res) -> "healthy"));
 
-        post("/money-transfer", "application/x-www-form-urlencoded", (request, response) -> {
+        post("/transfer", JSON, (request, response) -> {
             final MoneyTransfer moneyTransferRequest;
             try {
                 final String body = request.body();
@@ -62,7 +62,7 @@ public class MoneyTransferController {
             }
         }, jsonTransformer);
 
-        get("/alltransfer", "application/x-www-form-urlencoded", (request, response) -> {
+        get("/alltransfer", JSON, (request, response) -> {
 
             final String accountId = request.queryParamOrDefault("accountId", "");
 

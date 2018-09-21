@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Money Transfer",
+  "type": "object",
+  "properties": {
+    "transferId": {
+      "type": "string"
+    },
+    "sourceAccountId": {
+      "type": "integer"
+    },
+    "destinationAccountId": {
+      "type": "integer"
+    },
+    "amount": {
+      "$ref": "#/definitions/Money"
+    },
+    "transferDate": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "transferId",
+    "sourceAccountId",
+    "destinationAccountId",
+    "amount",
+    "description",
+    "transferDate"
+  ],
+  "definitions": {
+    "Money": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "number"
+        },
+        "currency": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "amount",
+        "currency"
+      ]
+    }
+  }
+}
