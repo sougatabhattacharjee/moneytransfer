@@ -1,15 +1,12 @@
-package org.revolut.moneytransfer.service;
+package org.revolut.moneytransfer.service.account;
 
 import org.revolut.moneytransfer.domain.Account;
 import org.revolut.moneytransfer.domain.AccountStatus;
 import org.revolut.moneytransfer.domain.request.AccountBalanceRequest;
 import org.revolut.moneytransfer.domain.request.AccountRequest;
-import org.revolut.moneytransfer.domain.request.AccountStatusRequest;
 import org.revolut.moneytransfer.exception.AccountAccessException;
-import org.revolut.moneytransfer.exception.AccountExistException;
 import org.revolut.moneytransfer.exception.AccountNotFoundException;
 import org.revolut.moneytransfer.exception.CurrencyException;
-import org.revolut.moneytransfer.exception.CurrencyNotMatchingException;
 
 import java.util.List;
 import java.util.Optional;

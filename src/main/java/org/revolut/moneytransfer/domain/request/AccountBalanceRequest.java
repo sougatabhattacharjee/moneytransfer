@@ -1,5 +1,6 @@
 package org.revolut.moneytransfer.domain.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.revolut.moneytransfer.domain.Money;
 
@@ -10,6 +11,13 @@ import org.revolut.moneytransfer.domain.Money;
 @Data
 public class AccountBalanceRequest extends AccountRequest {
 
-    private Long accountId;
     private Money balance;
+
+    public AccountBalanceRequest(@JsonProperty(required = true,  value="accountId")
+                                         Long accountId,
+                                 @JsonProperty(required = true,  value="balance")
+                                         Money balance) {
+        super(accountId);
+        this.balance = balance;
+    }
 }

@@ -1,5 +1,8 @@
 package org.revolut.moneytransfer.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,7 +27,10 @@ public class Money {
         // to make Jackson happy
     }
 
-    public Money(final BigDecimal amount, final Currency currency) {
+    @JsonCreator
+    public Money(@JsonProperty(required = true,  value="amount")
+                     final BigDecimal amount,
+                 @JsonProperty(required = true,  value="currency") final Currency currency) {
         this.amount = amount;
         this.currency = currency;
     }

@@ -1,6 +1,8 @@
 package org.revolut.moneytransfer;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -14,6 +16,7 @@ import com.google.gson.JsonSyntaxException;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 import org.revolut.moneytransfer.controller.AccountController;
+import org.revolut.moneytransfer.controller.MoneyTransferController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;
@@ -25,6 +28,7 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 
 import static spark.Spark.exception;
+
 /**
  * Created by Sougata Bhattacharjee
  * On 14.09.18
@@ -44,16 +48,22 @@ public class ApplicationMain {
     }
 
     private static AccountController createAccountRoute() {
-        final AccountController accountController = new AccountController(new ObjectMapper());
+        final AccountController accountController = new AccountController(getObjectMapper());
         accountController.initializeRoutes(GSON, JSON_TRANSFORMER);
         return accountController;
+    }
+
+    private static MoneyTransferController createMoneyTransferController() {
+        final MoneyTransferController moneyTransferController = new MoneyTransferController(getObjectMapper());
+        moneyTransferController.initializeRoutes(GSON, JSON_TRANSFORMER);
+        return moneyTransferController;
     }
 
     private static int startServer() {
         Spark.init();
 
         createAccountRoute();
-//        AccountController.initializeRoutes(GSON, JSON_TRANSFORMER);
+        createMoneyTransferController();
 
         exception(JsonSyntaxException.class, ApplicationMain::handleInvalidInput);
         LOG.debug("Created exception handlers");
@@ -98,5 +108,13 @@ public class ApplicationMain {
                 .create();
         return gson;
     }
+
+    public static ObjectMapper getObjectMapper() {
+        final ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
+        return mapper;
+    }
+
 
 }

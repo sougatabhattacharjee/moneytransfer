@@ -1,6 +1,11 @@
 package org.revolut.moneytransfer.controller;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.google.gson.Gson;
 import org.eclipse.jetty.http.HttpStatus;
 import org.revolut.moneytransfer.config.ResponseError;
@@ -12,12 +17,14 @@ import org.revolut.moneytransfer.domain.request.AccountStatusRequest;
 import org.revolut.moneytransfer.exception.AccountNotFoundException;
 import org.revolut.moneytransfer.exception.CurrencyException;
 import org.revolut.moneytransfer.exception.CurrencyNotMatchingException;
-import org.revolut.moneytransfer.service.AccountDao;
-import org.revolut.moneytransfer.service.AccountDaoImpl;
+import org.revolut.moneytransfer.service.account.AccountDao;
+import org.revolut.moneytransfer.service.account.AccountDaoImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.ResponseTransformer;
+import spark.utils.StringUtils;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,13 +53,23 @@ public class AccountController {
 
         path("/health", () -> get("", (req, res) -> "healthy"));
 
-        post("/account", "application/x-www-form-urlencoded", (request, response) -> {
+        post("/account", JSON, (request, response) -> {
             final String body = request.body();
-            final Account account = objectMapper.readValue(body, Account.class);
-            LOG.info("account information : {}", account.getAccountId());
+
+            if (StringUtils.isEmpty(body)) {
+                response.status(HttpStatus.BAD_REQUEST_400);
+                return new ResponseError("Cannot Process empty request");
+            }
             try {
+                final Account account = objectMapper.readValue(body, Account.class);
                 response.status(HttpStatus.CREATED_201);
                 return accountDao.insertNewAccount(account);
+            } catch (InvalidFormatException ex) {
+                response.status(HttpStatus.UNPROCESSABLE_ENTITY_422);
+                return new ResponseError(ex.getMessage());
+            } catch (JsonProcessingException ex) {
+                response.status(HttpStatus.BAD_REQUEST_400);
+                return new ResponseError(ex.getMessage());
             } catch (Exception ex) {
                 response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
                 return new ResponseError(ex.getMessage());
@@ -102,20 +119,21 @@ public class AccountController {
 
         put("/updateAccountInfo", "application/x-www-form-urlencoded", (request, response) -> {
             final AccountInfoRequest account;
-            try {
-                final String body = request.body();
-                if (body.isEmpty()) {
-                    response.status(HttpStatus.BAD_REQUEST_400);
-                    return new ResponseError("Payload cannot be empty, for details please check the API definition (swagger.yaml)");
-                }
-                account = objectMapper.readValue(body, AccountInfoRequest.class);
-            } catch (Exception ex) {
+            final String body = request.body();
+            if (StringUtils.isEmpty(body)) {
                 response.status(HttpStatus.BAD_REQUEST_400);
-                return new ResponseError("Malformed Request, for details please check the API definition (swagger.yaml)");
+                return new ResponseError("Payload cannot be empty, for details please check the API definition (swagger.yaml)");
             }
             try {
+                account = objectMapper.readValue(body, AccountInfoRequest.class);
                 response.status(HttpStatus.OK_200);
                 return accountDao.updateAccountById(account);
+            } catch (InvalidFormatException ex) {
+                response.status(HttpStatus.UNPROCESSABLE_ENTITY_422);
+                return new ResponseError(ex.getMessage());
+            } catch (JsonProcessingException ex) {
+                response.status(HttpStatus.BAD_REQUEST_400);
+                return new ResponseError(ex.getMessage());
             } catch (AccountNotFoundException ex) {
                 response.status(HttpStatus.NOT_FOUND_404);
                 return new ResponseError(ex.getMessage());
@@ -129,20 +147,21 @@ public class AccountController {
 
         put("/updateAccountStatus", "application/x-www-form-urlencoded", (request, response) -> {
             final AccountStatusRequest account;
-            try {
-                final String body = request.body();
-                if (body.isEmpty()) {
-                    response.status(HttpStatus.BAD_REQUEST_400);
-                    return new ResponseError("Payload cannot be empty, for details please check the API definition (swagger.yaml)");
-                }
-                account = objectMapper.readValue(body, AccountStatusRequest.class);
-            } catch (Exception ex) {
+            final String body = request.body();
+            if (body.isEmpty()) {
                 response.status(HttpStatus.BAD_REQUEST_400);
-                return new ResponseError("Malformed Request, for details please check the API definition (swagger.yaml)");
+                return new ResponseError("Payload cannot be empty, for details please check the API definition (swagger.yaml)");
             }
             try {
+                account = objectMapper.readValue(body, AccountStatusRequest.class);
                 response.status(HttpStatus.OK_200);
                 return accountDao.updateAccountById(account);
+            } catch (InvalidFormatException ex) {
+                response.status(HttpStatus.UNPROCESSABLE_ENTITY_422);
+                return new ResponseError(ex.getMessage());
+            } catch (JsonProcessingException ex) {
+                response.status(HttpStatus.BAD_REQUEST_400);
+                return new ResponseError(ex.getMessage());
             } catch (AccountNotFoundException ex) {
                 response.status(HttpStatus.NOT_FOUND_404);
                 return new ResponseError(ex.getMessage());
@@ -155,12 +174,13 @@ public class AccountController {
 
         put("/updateAccountBalance/credit", "application/x-www-form-urlencoded", (request, response) -> {
             final AccountBalanceRequest account;
+            final String body = request.body();
+            if (body.isEmpty()) {
+                response.status(HttpStatus.BAD_REQUEST_400);
+                return new ResponseError("Payload cannot be empty, for details please check the API definition (swagger.yaml)");
+            }
             try {
-                final String body = request.body();
-                if (body.isEmpty()) {
-                    response.status(HttpStatus.BAD_REQUEST_400);
-                    return new ResponseError("Payload cannot be empty, for details please check the API definition (swagger.yaml)");
-                }
+
                 account = objectMapper.readValue(body, AccountBalanceRequest.class);
             } catch (Exception ex) {
                 response.status(HttpStatus.BAD_REQUEST_400);
@@ -210,21 +230,6 @@ public class AccountController {
             }
 
         }, jsonTransformer);
-
-//        delete("/account/:id", "application/x-www-form-urlencoded", (request, response) -> {
-//            final long accountId = Long.parseLong(request.params("id"));
-//            try {
-//                response.status(HttpStatus.OK_200);
-//                return accountDao.getAccountById(accountId);
-//            } catch (AccountNotFoundException ex) {
-//                response.status(HttpStatus.NOT_FOUND_404);
-//                return new ResponseError(ex.getMessage());
-//            } catch (Exception ex) {
-//                response.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
-//                return new ResponseError(ex.getMessage());
-//            }
-//
-//        }, jsonTransformer);
 
     }
 

@@ -1,4 +1,4 @@
-package org.revolut.moneytransfer.service;
+package org.revolut.moneytransfer.service.account;
 
 import com.google.common.collect.Maps;
 import org.revolut.moneytransfer.domain.Account;
@@ -29,15 +29,13 @@ import java.util.stream.Collectors;
  */
 public class AccountDaoImpl implements AccountDao {
 
-    private final Map<Long, Account> accounts;
+    private final static Map<Long, Account> accounts = Maps.newConcurrentMap();
     private final AtomicLong maxAccountId = new AtomicLong(0);
 
     public AccountDaoImpl() {
-        this.accounts = Maps.newConcurrentMap();
     }
 
     public AccountDaoImpl(final Map<Long, Account> accounts) {
-        this.accounts = Maps.newConcurrentMap();
         this.accounts.putAll(accounts);
     }
 

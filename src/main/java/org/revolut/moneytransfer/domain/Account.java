@@ -1,5 +1,6 @@
 package org.revolut.moneytransfer.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +18,7 @@ import org.joda.time.DateTime;
 @ToString
 public class Account {
 
-    private Long accountId;
+    private long accountId;
     private User accountHolder;
     private Money balance;
     private AccountStatus status;
@@ -35,11 +36,14 @@ public class Account {
         this.accountHolder = account.getAccountHolder();
         this.created = DateTime.now();
         this.status = AccountStatus.ACTIVE;
-
     }
 
-
-
-
-
+    public Account(
+                   @JsonProperty(required = true,  value="accountHolder")
+                   final User accountHolder,
+                   @JsonProperty(required = true,  value="balance")
+                   final Money balance) {
+        this.accountHolder = accountHolder;
+        this.balance = balance;
+    }
 }
