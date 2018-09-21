@@ -14,7 +14,7 @@ To implement this solution, the following libraries / tools were used:
   * Git - Version control system.                               
 
 ### Rest Api Route(s)
-Please check the api definition here: [revolut-moneytransfer-api.yaml]([Contribution guidelines for this project](docs/CONTRIBUTING.md))
+Please check the api definition here: [revolut-moneytransfer-api.yaml](api/revolut-moneytransfer-api.yaml)
 #### Accounts
 ```
 get(localhost:4567/allAccounts") -> Get all accounts
